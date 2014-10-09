@@ -26,3 +26,13 @@
 *.exe
 *.out
 *.app
+
+#vc generated
+*.ncb
+*.manifest
+*.ilk
+*.pdb
+*.dep
+*.idb
+*.res
+
