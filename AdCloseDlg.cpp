@@ -117,9 +117,9 @@ BOOL CAdCloseDlg::OnInitDialog()
 		exit(0);
 	}
 
-	m_list.InsertColumn(0, "窗口类名", LVCFMT_LEFT, 150);
-	m_list.InsertColumn(0, "窗口标题", LVCFMT_LEFT, 150);
-	m_list.InsertColumn(0, "时间", LVCFMT_LEFT, 150);
+	m_list.InsertColumn(0, _T("窗口类名"), LVCFMT_LEFT, 150);
+	m_list.InsertColumn(0, _T("窗口标题"), LVCFMT_LEFT, 150);
+	m_list.InsertColumn(0, _T("时间"), LVCFMT_LEFT, 150);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -190,8 +190,8 @@ BOOL CALLBACK lpEnumFunc(HWND hwnd, LPARAM lParam)
 	GetWindowText(hwnd, text, ARRAYSIZE(text));
 	CString stext = text;
 
-	char name[1000]="";
-	GetClassNameA(hwnd, name, ARRAYSIZE(name));
+	TCHAR name[1000]=_T("");
+	GetClassName(hwnd, name, ARRAYSIZE(name));
 	CString sname = name;
 
 
@@ -201,11 +201,11 @@ BOOL CALLBACK lpEnumFunc(HWND hwnd, LPARAM lParam)
 		{
 			if ((style&WS_VISIBLE) && (style&WS_POPUP))
 			{
-				_strlwr_s(name);
-				_strlwr_s(text);
-				if (strstr(text, "menu") == NULL)
+				_tcslwr_s(name, ARRAYSIZE(name));
+				_tcslwr_s(text, ARRAYSIZE(text));
+				if (_tcsstr(text, _T("menu")) == NULL)
 				{
-					if (strstr(name, "tx") != NULL || strstr(name, "xl") != NULL)
+					if (_tcsstr(name, _T("tx")) != NULL || _tcsstr(name, _T("xl")) != NULL)
 					{
 						::PostMessage(hwnd, WM_CLOSE, 0, 0);
 						::PostMessage(hwnd, WM_DESTROY, 0, 0);
@@ -217,7 +217,7 @@ BOOL CALLBACK lpEnumFunc(HWND hwnd, LPARAM lParam)
 							int count = dlg->m_list.GetItemCount();
 							CTime tm = CTime::GetCurrentTime();
 							CString ss;
-							ss.Format("%d/%02d/%02d %02d:%02d:%02d", tm.GetYear(), tm.GetMonth(), tm.GetDay(), tm.GetHour(), tm.GetMinute(), tm.GetSecond());
+							ss.Format(_T("%d/%02d/%02d %02d:%02d:%02d"), tm.GetYear(), tm.GetMonth(), tm.GetDay(), tm.GetHour(), tm.GetMinute(), tm.GetSecond());
 							int idx = dlg->m_list.InsertItem(count, ss);
 							dlg->m_list.SetItemText(idx, 1, stext);
 							dlg->m_list.SetItemText(idx, 2, sname);
