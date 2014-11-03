@@ -173,6 +173,21 @@ HCURSOR CAdCloseDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+void AddBlock(CString str1, CString str2)
+{
+	CAdCloseDlg* dlg = (CAdCloseDlg*)AfxGetMainWnd();
+	int count = dlg->m_list.GetItemCount();
+	CTime tm = CTime::GetCurrentTime();
+	CString ss;
+	ss.Format(_T("%d/%02d/%02d %02d:%02d:%02d"), tm.GetYear(), tm.GetMonth(), tm.GetDay(), tm.GetHour(), tm.GetMinute(), tm.GetSecond());
+	int idx = dlg->m_list.InsertItem(count, ss);
+	dlg->m_list.SetItemText(idx, 1, str1);
+	dlg->m_list.SetItemText(idx, 2, str2);
+	dlg->m_list.EnsureVisible(idx, FALSE);
+
+	dlg->SetDlgItemInt(IDC_STATIC_COUNT, count + 1);
+}
+
 HWND g_lastWnd = NULL;
 BOOL CALLBACK lpEnumFunc(HWND hwnd, LPARAM lParam)
 {
@@ -211,17 +226,7 @@ BOOL CALLBACK lpEnumFunc(HWND hwnd, LPARAM lParam)
 						//
 						if (hwnd != g_lastWnd)
 						{
-							CAdCloseDlg* dlg = (CAdCloseDlg*)AfxGetMainWnd();
-							int count = dlg->m_list.GetItemCount();
-							CTime tm = CTime::GetCurrentTime();
-							CString ss;
-							ss.Format(_T("%d/%02d/%02d %02d:%02d:%02d"), tm.GetYear(), tm.GetMonth(), tm.GetDay(), tm.GetHour(), tm.GetMinute(), tm.GetSecond());
-							int idx = dlg->m_list.InsertItem(count, ss);
-							dlg->m_list.SetItemText(idx, 1, stext);
-							dlg->m_list.SetItemText(idx, 2, sname);
-							dlg->m_list.EnsureVisible(idx, FALSE);
-
-							dlg->SetDlgItemInt(IDC_STATIC_COUNT, count+1);
+							AddBlock(stext, sname);
 
 							g_lastWnd = hwnd;
 						}
@@ -304,17 +309,7 @@ void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 		if (id2 == 0 && id3 == 0)
 		{
 			KillProcessFromName(_T("ThunderPlatform.exe"));
-			{
-				CAdCloseDlg* dlg = (CAdCloseDlg*)AfxGetMainWnd();
-				int count = dlg->m_list.GetItemCount();
-				CTime tm = CTime::GetCurrentTime();
-				CString ss;
-				ss.Format(_T("%d/%02d/%02d %02d:%02d:%02d"), tm.GetYear(), tm.GetMonth(), tm.GetDay(), tm.GetHour(), tm.GetMinute(), tm.GetSecond());
-				int idx = dlg->m_list.InsertItem(count, ss);
-				dlg->m_list.SetItemText(idx, 1, _T("关闭迅雷后台"));
-				dlg->m_list.SetItemText(idx, 2, _T("关闭迅雷后台"));
-				dlg->m_list.EnsureVisible(idx, FALSE);
-			}
+			AddBlock(_T("关闭迅雷后台"), _T("关闭迅雷后台"));
 		}
 	}
 
@@ -323,17 +318,7 @@ void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 	if (id99 > 0)
 	{
 		KillProcessFromName(_T("XmpTipWnd.exe"));
-		{
-			CAdCloseDlg* dlg = (CAdCloseDlg*)AfxGetMainWnd();
-			int count = dlg->m_list.GetItemCount();
-			CTime tm = CTime::GetCurrentTime();
-			CString ss;
-			ss.Format(_T("%d/%02d/%02d %02d:%02d:%02d"), tm.GetYear(), tm.GetMonth(), tm.GetDay(), tm.GetHour(), tm.GetMinute(), tm.GetSecond());
-			int idx = dlg->m_list.InsertItem(count, ss);
-			dlg->m_list.SetItemText(idx, 1, _T("关闭迷你迅雷看看弹框"));
-			dlg->m_list.SetItemText(idx, 2, _T("关闭迷你迅雷看看弹框"));
-			dlg->m_list.EnsureVisible(idx, FALSE);
-		}
+		AddBlock(_T("关闭迷你迅雷看看弹框"), _T("关闭迷你迅雷看看弹框"));
 	}
 
 	if (!tray)
