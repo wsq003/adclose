@@ -304,7 +304,6 @@ void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 		if (id2 == 0 && id3 == 0)
 		{
 			KillProcessFromName(_T("ThunderPlatform.exe"));
-
 			{
 				CAdCloseDlg* dlg = (CAdCloseDlg*)AfxGetMainWnd();
 				int count = dlg->m_list.GetItemCount();
@@ -315,9 +314,25 @@ void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 				dlg->m_list.SetItemText(idx, 1, _T("¹Ø±ÕÑ¸À×ºóÌ¨"));
 				dlg->m_list.SetItemText(idx, 2, _T("¹Ø±ÕÑ¸À×ºóÌ¨"));
 				dlg->m_list.EnsureVisible(idx, FALSE);
-
-				Sleep(10); //·ÀÖ¹ÖØ¸´¹Ø±Õ
 			}
+		}
+	}
+
+	//¹Ø±ÕÃÔÄãÑ¸À×¿´¿´µ¯¿ò
+	int id99 = FindProcess(_T("XmpTipWnd.exe"));
+	if (id99 > 0)
+	{
+		KillProcessFromName(_T("XmpTipWnd.exe"));
+		{
+			CAdCloseDlg* dlg = (CAdCloseDlg*)AfxGetMainWnd();
+			int count = dlg->m_list.GetItemCount();
+			CTime tm = CTime::GetCurrentTime();
+			CString ss;
+			ss.Format(_T("%d/%02d/%02d %02d:%02d:%02d"), tm.GetYear(), tm.GetMonth(), tm.GetDay(), tm.GetHour(), tm.GetMinute(), tm.GetSecond());
+			int idx = dlg->m_list.InsertItem(count, ss);
+			dlg->m_list.SetItemText(idx, 1, _T("¹Ø±ÕÃÔÄãÑ¸À×¿´¿´µ¯¿ò"));
+			dlg->m_list.SetItemText(idx, 2, _T("¹Ø±ÕÃÔÄãÑ¸À×¿´¿´µ¯¿ò"));
+			dlg->m_list.EnsureVisible(idx, FALSE);
 		}
 	}
 
