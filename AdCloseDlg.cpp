@@ -265,6 +265,7 @@ DWORD FindProcess(CString strProcessName)
 		if (!scTmp.Compare(strProcessName))
 		{
 			DWORD dwProcessID = pe.th32ProcessID;
+			CloseHandle(hSnapShot);
 			return dwProcessID;
 		}
 		scTmp.ReleaseBuffer();
