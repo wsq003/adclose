@@ -1,5 +1,4 @@
 
-This tool is writen in MFC. You may need to install 'vcredist' before run it.
+è¿™ä¸ªå·¥å…·æ˜¯ç”¨MFCå†™çš„ï¼Œä½ å¯èƒ½ä¼šéœ€è¦å®‰è£…vcredistã€‚
 
-Õâ¸ö¹¤¾ßÊÇÓÃMFCĞ´µÄ£¬Äã¿ÉÄÜ»áĞèÒª°²×°vcredist¡£
-
+ä¸‹è½½åœ°å€ï¼šhttp://www.microsoft.com/zh-cn/download/details.aspx?id=40784
