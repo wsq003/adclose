@@ -38,3 +38,11 @@
 *.suo
 *.sdf
 
+#others
+*.tlog
+*.ipch
+*.log
+*.opensdf
+*.aps
+
+

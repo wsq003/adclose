@@ -57,4 +57,7 @@
 #endif
 #endif
 
+#include <tchar.h>
+#include <TlHelp32.h>
+
 

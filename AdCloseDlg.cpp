@@ -174,7 +174,6 @@ HCURSOR CAdCloseDlg::OnQueryDragIcon()
 }
 
 HWND g_lastWnd = NULL;
-
 BOOL CALLBACK lpEnumFunc(HWND hwnd, LPARAM lParam)
 {
 	DWORD style = GetWindowStyle(hwnd);
@@ -193,7 +192,6 @@ BOOL CALLBACK lpEnumFunc(HWND hwnd, LPARAM lParam)
 	TCHAR name[1000]=_T("");
 	GetClassName(hwnd, name, ARRAYSIZE(name));
 	CString sname = name;
-
 
 	if (rect.Height() < 400 && rect.Width() < 400 && rect.Height() > 100)
 	{
@@ -243,12 +241,80 @@ void CAdCloseDlg::OnBnClickedWork()
 	ToTray();
 }
 
-bool tray = false;
+//返回第一个匹配的进程号，忽略大小写。失败返回0
+DWORD FindProcess(CString strProcessName)
+{
+	HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 
+	PROCESSENTRY32 pe;
+	pe.dwSize = sizeof(PROCESSENTRY32);
+
+	if (!Process32First(hSnapShot, &pe))
+	{
+		return 0;
+	}
+
+	strProcessName.MakeLower();
+
+	while (Process32Next(hSnapShot, &pe))
+	{
+		CString scTmp = pe.szExeFile;
+
+		scTmp.MakeLower();
+
+		if (!scTmp.Compare(strProcessName))
+		{
+			DWORD dwProcessID = pe.th32ProcessID;
+			return dwProcessID;
+		}
+		scTmp.ReleaseBuffer();
+	}
+	strProcessName.ReleaseBuffer();
+	return 0;
+}
+
+//kill进程from名字，只杀第一个匹配的
+void KillProcessFromName(CString strProcessName)
+{
+	DWORD dwProcessID = FindProcess(strProcessName);
+	if (dwProcessID > 0)
+	{
+		HANDLE hProcess = ::OpenProcess(PROCESS_TERMINATE, FALSE, dwProcessID);
+		::TerminateProcess(hProcess, 0);
+		CloseHandle(hProcess);
+	}
+}
+
+bool tray = false;
 void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	//遍历窗口，关闭腾讯和迅雷的右下角弹框
 	EnumWindows(lpEnumFunc, NULL);
+
+	//当迅雷没运行的时候，关闭后台上传进程
+	int id1 = FindProcess(_T("ThunderPlatform.exe"));
+	if (id1 > 0)
+	{
+		int id2 = FindProcess(_T("Thunder.exe"));
+		if (id2 == 0)
+		{
+			KillProcessFromName(_T("ThunderPlatform.exe"));
+
+			{
+				CAdCloseDlg* dlg = (CAdCloseDlg*)AfxGetMainWnd();
+				int count = dlg->m_list.GetItemCount();
+				CTime tm = CTime::GetCurrentTime();
+				CString ss;
+				ss.Format(_T("%d/%02d/%02d %02d:%02d:%02d"), tm.GetYear(), tm.GetMonth(), tm.GetDay(), tm.GetHour(), tm.GetMinute(), tm.GetSecond());
+				int idx = dlg->m_list.InsertItem(count, ss);
+				dlg->m_list.SetItemText(idx, 1, _T("关闭迅雷后台"));
+				dlg->m_list.SetItemText(idx, 2, _T("关闭迅雷后台"));
+				dlg->m_list.EnsureVisible(idx, FALSE);
+
+				Sleep(10); //防止重复关闭
+			}
+		}
+	}
 
 	if (!tray)
 	{
