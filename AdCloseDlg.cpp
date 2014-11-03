@@ -299,8 +299,9 @@ void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 	int id1 = FindProcess(_T("ThunderPlatform.exe"));
 	if (id1 > 0)
 	{
-		int id2 = FindProcess(_T("Thunder.exe"));
-		if (id2 == 0)
+		int id2 = FindProcess(_T("Thunder.exe"));	//Ñ¸À×
+		int id3 = FindProcess(_T("KKV.exe"));		//Ñ¸À×¿´¿´
+		if (id2 == 0 && id3 == 0)
 		{
 			KillProcessFromName(_T("ThunderPlatform.exe"));
 
