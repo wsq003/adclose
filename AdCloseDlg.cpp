@@ -270,6 +270,9 @@ DWORD FindProcess(CString strProcessName)
 		scTmp.ReleaseBuffer();
 	}
 	strProcessName.ReleaseBuffer();
+
+	CloseHandle(hSnapShot);
+
 	return 0;
 }
 
