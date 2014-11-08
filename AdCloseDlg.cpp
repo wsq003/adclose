@@ -246,7 +246,52 @@ void CAdCloseDlg::OnBnClickedWork()
 	ToTray();
 }
 
-//返回第一个匹配的进程号，忽略大小写。失败返回0
+bool PaternMatch(const TCHAR *pat, const TCHAR *str)
+{
+	const TCHAR *s = NULL;
+	const TCHAR *p = NULL;
+	bool star = false;
+	bool bBreak = false;
+	do
+	{
+		bBreak = false;
+		for (s = str, p = pat; *s; ++s, ++p)
+		{
+			switch (*p)
+			{
+			case '?':
+				break;
+			case '*':
+				star = true; //出现*匹配符
+				str = s;
+				pat = p;
+				if (!*++pat)
+					return true;
+				bBreak = true; //退出循环
+				break;
+			default:
+				if (*s != *p)
+				{
+					if (!star)
+						return false;
+					str++;
+					bBreak = true;
+				}
+				break;
+			}
+			if (bBreak) //退出循环 重新开始循环
+				break;
+		}
+		if (bBreak == false)
+		{
+			if (*p == '*')
+				++p;
+			return (!*p);
+		}
+	} while (true);
+}
+
+//返回第一个匹配的进程号，忽略大小写。支持通配符。失败返回0
 DWORD FindProcess(CString strProcessName)
 {
 	HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -267,7 +312,7 @@ DWORD FindProcess(CString strProcessName)
 
 		scTmp.MakeLower();
 
-		if (!scTmp.Compare(strProcessName))
+		if (PaternMatch(strProcessName.GetString(), scTmp.GetString()))
 		{
 			DWORD dwProcessID = pe.th32ProcessID;
 			CloseHandle(hSnapShot);
@@ -314,10 +359,10 @@ void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	//关闭迷你迅雷看看弹框
-	int id99 = FindProcess(_T("XmpTipWnd.exe"));
+	int id99 = FindProcess(_T("XmpTipWnd*.exe"));
 	if (id99 > 0)
 	{
-		KillProcessFromName(_T("XmpTipWnd.exe"));
+		KillProcessFromName(_T("XmpTipWnd*.exe"));
 		AddBlock(_T("关闭迷你迅雷看看弹框"), _T("关闭迷你迅雷看看弹框"));
 	}
 
