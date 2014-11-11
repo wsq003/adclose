@@ -350,10 +350,11 @@ void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 	if (id1 > 0)
 	{
 		int id2 = FindProcess(_T("Thunder.exe"));	//迅雷
-		int id3 = FindProcess(_T("KKV.exe"));		//迅雷看看
+		int id3 = FindProcess(_T("XMP.exe"));		//迅雷看看
 		if (id2 == 0 && id3 == 0)
 		{
 			KillProcessFromName(_T("ThunderPlatform.exe"));
+			KillProcessFromName(_T("KKV.exe"));
 			AddBlock(_T("关闭迅雷后台"), _T("关闭迅雷后台"));
 		}
 	}
