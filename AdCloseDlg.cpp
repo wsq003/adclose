@@ -108,7 +108,7 @@ BOOL CAdCloseDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
-	this->SetTimer(12123, 10, NULL);
+	this->SetTimer(12123, 100, NULL);
 
 	::CreateMutex(NULL,TRUE,_T("adclose_mt"));
 	if(GetLastError()==ERROR_ALREADY_EXISTS)
