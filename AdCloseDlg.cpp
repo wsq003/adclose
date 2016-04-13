@@ -350,29 +350,35 @@ void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 	EnumWindows(lpEnumFunc, NULL);
 
 	//当迅雷没运行的时候，关闭后台上传进程
-	int id1 = FindProcess(_T("ThunderPlatform.exe"));
-	if (id1 > 0)
+	if (timecounter%10 == 0)
 	{
-		int id2 = FindProcess(_T("Thunder.exe"));	//迅雷
-		int id3 = FindProcess(_T("XMP.exe"));		//迅雷看看
-		if (id2 == 0 && id3 == 0)
+		int id1 = FindProcess(_T("ThunderPlatform.exe"));
+		if (id1 > 0)
 		{
-			KillProcessFromName(_T("ThunderPlatform.exe"));
-			KillProcessFromName(_T("KKV.exe"));
-			AddBlock(_T("关闭迅雷后台"), _T("关闭迅雷后台"));
+			int id2 = FindProcess(_T("Thunder.exe"));	//迅雷
+			int id3 = FindProcess(_T("XMP.exe"));		//迅雷看看
+			if (id2 == 0 && id3 == 0)
+			{
+				KillProcessFromName(_T("ThunderPlatform.exe"));
+				KillProcessFromName(_T("KKV.exe"));
+				AddBlock(_T("关闭迅雷后台"), _T("关闭迅雷后台"));
+			}
 		}
 	}
 
 	//关闭迷你迅雷看看弹框
-	int id99 = FindProcess(_T("XmpTipWnd*.exe"));
-	if (id99 > 0)
+	if (timecounter%10 == 0)
 	{
-		KillProcessFromName(_T("XmpTipWnd*.exe"));
-		AddBlock(_T("关闭迷你迅雷看看弹框"), _T("关闭迷你迅雷看看弹框"));
+		int id99 = FindProcess(_T("XmpTipWnd*.exe"));
+		if (id99 > 0)
+		{
+			KillProcessFromName(_T("XmpTipWnd*.exe"));
+			AddBlock(_T("关闭迷你迅雷看看弹框"), _T("关闭迷你迅雷看看弹框"));
+		}
 	}
 
 	//查找复制Windows图片
-	if (timecounter%10 == 0)
+	if (timecounter%100 == 0)
 	{
 		SaveSysPics();
 	}
