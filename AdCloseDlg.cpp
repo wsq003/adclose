@@ -352,7 +352,7 @@ void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 	//当迅雷没运行的时候，关闭后台上传进程
 	if (timecounter%10 == 0)
 	{
-		int id1 = FindProcess(_T("ThunderPlatform.exe"));
+		int id1 = FindProcess(_T("ThunderPlatform.exe")) + FindProcess(_T("KKV.exe"));
 		if (id1 > 0)
 		{
 			int id2 = FindProcess(_T("Thunder.exe"));	//迅雷
@@ -374,6 +374,18 @@ void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 		{
 			KillProcessFromName(_T("XmpTipWnd*.exe"));
 			AddBlock(_T("关闭迷你迅雷看看弹框"), _T("关闭迷你迅雷看看弹框"));
+		}
+	}
+
+	//关闭同花顺的后台模块
+	if (timecounter%10 == 0)
+	{
+		if (FindProcess(_T("zdsj.exe")) > 0 || FindProcess(_T("sjsj.exe")) > 0)
+		{
+			KillProcessFromName(_T("zdsj.exe"));
+			KillProcessFromName(_T("sjsj.exe"));
+
+			AddBlock(_T("关闭同花顺后台"), _T("关闭同花顺后台"));
 		}
 	}
 
