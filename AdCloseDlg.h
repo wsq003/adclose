@@ -39,4 +39,6 @@ public:
 	afx_msg void OnTrayClose();
 	afx_msg void OnClose();
 	CListCtrl m_list;
+	afx_msg void OnBnClickedViewpic();
+	void SaveSysPics();
 };

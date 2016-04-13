@@ -73,6 +73,7 @@ BEGIN_MESSAGE_MAP(CAdCloseDlg, CDialog)
 	ON_MESSAGE(WM_AC_NID, OnAcNid)
 	ON_COMMAND(ID_TRAY_CLOSE, OnTrayClose)
 	ON_WM_CLOSE()
+	ON_BN_CLICKED(IDC_VIEWPIC, &CAdCloseDlg::OnBnClickedViewpic)
 END_MESSAGE_MAP()
 
 
@@ -208,7 +209,7 @@ BOOL CALLBACK lpEnumFunc(HWND hwnd, LPARAM lParam)
 	GetClassName(hwnd, name, ARRAYSIZE(name));
 	CString sname = name;
 
-	if (rect.Height() < 400 && rect.Width() < 400 && rect.Height() > 100)
+	if (rect.Height() < 400 && rect.Width() < 500 && rect.Height() > 100)
 	{
 		if (abs(width - rect.right) < 100 && abs(height - rect.bottom) < 100)
 		{
@@ -339,9 +340,12 @@ void KillProcessFromName(CString strProcessName)
 	}
 }
 
+long timecounter = 0;
 bool tray = false;
 void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 {
+	timecounter++;
+
 	//遍历窗口，关闭腾讯和迅雷的右下角弹框
 	EnumWindows(lpEnumFunc, NULL);
 
@@ -367,6 +371,13 @@ void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 		AddBlock(_T("关闭迷你迅雷看看弹框"), _T("关闭迷你迅雷看看弹框"));
 	}
 
+	//查找复制Windows图片
+	if (timecounter%10 == 0)
+	{
+		SaveSysPics();
+	}
+
+	//维护trayicon状态
 	if (!tray)
 	{
 		ToTray();
@@ -456,4 +467,88 @@ void CAdCloseDlg::OnClose()
 	{
 		CDialog::OnClose();
 	}
+}
+
+//支持通配符
+void FindFiles(CString pathWildCard, std::vector<CString>& result)
+{
+	WIN32_FIND_DATA  fileAttr;
+	HANDLE  handle;
+	handle = FindFirstFile(pathWildCard, &fileAttr);
+
+	if (handle == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+	else
+	{
+		result.push_back(fileAttr.cFileName);
+
+		while (FindNextFile(handle, &fileAttr))
+		{
+			result.push_back(fileAttr.cFileName); //输出每一个查找到的文件名
+		}
+
+		FindClose(handle);
+	}
+}
+
+CString GetPicFolder()
+{
+	wchar_t szPath[MAX_PATH];
+	GetTempPath(MAX_PATH, szPath);
+
+	CString path(szPath);
+	path += _T("mypic\\");
+
+	return path;
+}
+
+void CAdCloseDlg::SaveSysPics()
+{
+	wchar_t szPath[MAX_PATH];
+	::SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, szPath);
+
+	CString path(szPath);
+	path += _T("\\Packages\\");
+
+	std::vector<CString> folders;
+	FindFiles(path + _T("\\Microsoft.Windows.ContentDeliveryManager_*"), folders);
+	if (folders.size() == 0)
+	{
+		return;
+	}
+	path += folders[0];
+	path += _T("\\LocalState\\Assets\\");
+	
+	std::vector<CString> files;
+	FindFiles(path + _T("\\*"), files);
+
+	::CreateDirectory(GetPicFolder(), NULL);
+
+	for (auto it = files.begin(); it != files.end(); it++)
+	{
+		CString oldfile = path + *it;
+
+		if (oldfile.GetAt(oldfile.GetLength() - 1) == '.')
+		{
+			continue;
+		}
+
+		CFileStatus status;
+
+		CFile::GetStatus(oldfile, status);
+
+		if (status.m_size > 100*1000)
+		{
+			CString newfile = GetPicFolder() + *it + _T(".jpg");
+			CopyFile(oldfile, newfile, true);
+		}
+	}
+}
+
+void CAdCloseDlg::OnBnClickedViewpic()
+{
+	CString param = _T("/root,") + GetPicFolder();
+	::ShellExecute(NULL, _T("open"), _T("explorer.exe"), param, GetPicFolder(), SW_SHOW);
 }
