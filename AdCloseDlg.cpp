@@ -346,8 +346,11 @@ void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	timecounter++;
 
-	//遍历窗口，关闭腾讯和迅雷的右下角弹框
-	EnumWindows(lpEnumFunc, NULL);
+	if (timecounter%5 == 0)
+	{
+		//遍历窗口，关闭腾讯和迅雷的右下角弹框
+		EnumWindows(lpEnumFunc, NULL);
+	}
 
 	//当迅雷没运行的时候，关闭后台上传进程
 	if (timecounter%10 == 0)
@@ -390,16 +393,20 @@ void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	//查找复制Windows图片
-	if (timecounter%100 == 0)
+	if (timecounter%1000 == 0)
 	{
 		SaveSysPics();
 	}
 
-	//维护trayicon状态
-	if (!tray)
+	if (timecounter%10 == 0)
 	{
-		ToTray();
-		tray = true;
+		//维护trayicon状态
+		if (!tray)
+		{
+			ToTray();
+			tray = true;
+		}
+
 	}
 
 	CDialog::OnTimer(nIDEvent);
