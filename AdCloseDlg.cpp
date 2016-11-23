@@ -395,7 +395,7 @@ void CAdCloseDlg::OnTimer(UINT_PTR nIDEvent)
 	//≤È’“∏¥÷∆WindowsÕº∆¨
 	if (timecounter%1000 == 0)
 	{
-		SaveSysPics();
+		//SaveSysPics();
 	}
 
 	if (timecounter%10 == 0)
